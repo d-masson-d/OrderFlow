@@ -20,18 +20,10 @@ class MainActivity : AppCompatActivity() {
         val login_button:Button = findViewById(R.id.login_button)
 
         login_button.setOnClickListener(){
-            if(login.text == "admin"){
-                if(password.text == "00000000"){
                     val intent = Intent(this, WorkScreen::class.java)
                     startActivity(intent)
-                }
-                else{
-                    Toast.makeText(this, "Incorrect data", Toast.LENGTH_LONG).show()
-                }
             }
         }
 
 
-
     }
-}
