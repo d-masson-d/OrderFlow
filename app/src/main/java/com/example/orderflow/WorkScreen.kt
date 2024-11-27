@@ -16,6 +16,7 @@ import com.example.orderflow.UI.EditOrderFragment
 import com.google.zxing.BarcodeFormat
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import java.io.ByteArrayOutputStream
+import kotlin.random.Random
 
 class WorkScreen : AppCompatActivity() {
     private lateinit var orderList: MutableList<Order>
@@ -33,9 +34,11 @@ class WorkScreen : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
 
+
+
         val barcodeEncoder = BarcodeEncoder()
         val bitmap: Bitmap =
-            barcodeEncoder.encodeBitmap("123456789", BarcodeFormat.CODE_128, 500, 200)
+            barcodeEncoder.encodeBitmap("3d23s7ac24", BarcodeFormat.CODE_128, 500, 200)
 
         orderList = mutableListOf(
             Order(1, "Иван Иванов", "2023-10-01", "Стол", "2323sdsszx", 2, "в ожидании",
