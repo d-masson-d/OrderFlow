@@ -1,5 +1,6 @@
 package com.example.orderflow.Adapter
 
+import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.orderflow.Data.Order
 import com.example.orderflow.R
-import android.graphics.BitmapFactory
-
+import com.journeyapps.barcodescanner.BarcodeEncoder
 
 class OrderAdapter(
     private var orders: List<Order>,
@@ -43,16 +43,18 @@ class OrderAdapter(
         holder.status.text = order.status
 
 
-        order.imageResourceId?.let {
-            val bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
+        try {
+            val barcodeEncoder = BarcodeEncoder()
+            val bitmap: Bitmap = barcodeEncoder.encodeBitmap(order.imageResourceId, com.google.zxing.BarcodeFormat.CODE_128, 400, 200)
             holder.image.setImageBitmap(bitmap)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
 
         holder.editButton.setOnClickListener {
             onEditClick(order)
         }
     }
-
 
     override fun getItemCount(): Int = orders.size
 

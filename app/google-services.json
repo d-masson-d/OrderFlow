@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "936267653703",
+    "project_id": "orderflow-d19e4",
+    "storage_bucket": "orderflow-d19e4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:936267653703:android:183351f0822472f5d6c762",
+        "android_client_info": {
+          "package_name": "com.example.orderflow"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnjd-iHaKJ1R5CNUl0GJd25_vgMlIEGSk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

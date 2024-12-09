@@ -1,4 +1,5 @@
 package com.example.orderflow.UI
+import FirestoreRepository
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,13 +10,13 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.example.orderflow.Data.Order
 import com.example.orderflow.R
 import java.util.*
 
 class EditOrderFragment : DialogFragment() {
-
     private lateinit var order: Order
     private lateinit var customerNameEditText: TextView
     private lateinit var orderDateTextView: TextView
@@ -23,13 +24,11 @@ class EditOrderFragment : DialogFragment() {
     private lateinit var modelText: TextView
     private lateinit var quantityEditText: EditText
     private lateinit var statusSpinner: Spinner
+    private lateinit var firestoreRepository: FirestoreRepository
 
-    private val statuses = arrayOf("в ожидании", "в производстве", "произведен","в транспортировке","доставлен","завершен","отменен")
+    private val statuses = arrayOf("в ожидании", "в производстве", "произведен", "в транспортировке", "доставлен", "завершен", "отменен")
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_edit_order, container, false)
     }
 
@@ -44,22 +43,23 @@ class EditOrderFragment : DialogFragment() {
         statusSpinner = view.findViewById(R.id.statusSpinner)
         val saveButton: Button = view.findViewById(R.id.saveButton)
 
-        order = arguments?.getParcelable("order")!!
-
+        order = arguments?.getParcelable("order") ?: throw IllegalArgumentException("Order must be provided")
+        firestoreRepository = FirestoreRepository()
 
         customerNameEditText.setText(order.customerName)
         orderDateTextView.text = order.orderDate
         furnitureTypeEditText.setText(order.furnitureType)
+        modelText.setText(order.model)
         quantityEditText.setText(order.quantity.toString())
-
 
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, statuses)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         statusSpinner.adapter = adapter
 
-
         val statusIndex = statuses.indexOf(order.status)
-        statusSpinner.setSelection(statusIndex)
+        if (statusIndex >= 0) {
+            statusSpinner.setSelection(statusIndex)
+        }
 
         orderDateTextView.setOnClickListener {
             showDatePickerDialog()
@@ -69,10 +69,17 @@ class EditOrderFragment : DialogFragment() {
             order.customerName = customerNameEditText.text.toString()
             order.orderDate = orderDateTextView.text.toString()
             order.furnitureType = furnitureTypeEditText.text.toString()
-            order.quantity = quantityEditText.text.toString().toInt()
+            order.model = modelText.text.toString()
+            order.quantity = quantityEditText.text.toString().toLongOrNull() ?: 0
             order.status = statusSpinner.selectedItem.toString()
 
-            dismiss()
+
+            firestoreRepository.updateOrder(order,
+                onSuccess = { dismiss() },
+                onFailure = { exception ->
+                    Toast.makeText(requireContext(), "Ошибка обновления заказа: ${exception.message}", Toast.LENGTH_SHORT).show()
+                }
+            )
         }
     }
 
